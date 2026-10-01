@@ -30,7 +30,6 @@
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
-    /* Custom scrollbar */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -49,7 +48,57 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
 
-  <!-- TOP NAVBAR -->
+  <!-- ==================== LOGIN SCREEN OVERLAY ==================== -->
+  <div id="login-screen" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-sm w-full p-6 sm:p-8 shadow-2xl relative space-y-6">
+      <!-- Header / Icon -->
+      <div class="text-center space-y-2">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-500 to-cyan-500 mx-auto flex items-center justify-center shadow-lg shadow-emerald-500/20">
+          <svg class="w-7 h-7 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+        </div>
+        <h2 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">Studio Finance</h2>
+        <p class="text-xs text-slate-400">Masukkan PIN Keamanan untuk membuka pembukuan dan inventaris aset studio.</p>
+      </div>
+
+      <!-- Form PIN -->
+      <form id="login-form" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5 text-center">PIN Akses</label>
+          <div class="relative">
+            <input type="password" id="login-pin-input" maxlength="20" autofocus required placeholder="••••" class="w-full text-center tracking-widest text-2xl font-mono bg-slate-950 border border-slate-800 rounded-2xl py-3 px-4 text-white focus:outline-none focus:border-emerald-500 transition">
+            <button type="button" onclick="togglePinVisibility()" class="absolute right-3.5 top-3.5 text-slate-500 hover:text-slate-300 text-xs">
+              👁️
+            </button>
+          </div>
+          <p id="login-error-msg" class="text-[11px] text-rose-400 text-center font-medium mt-1.5 hidden">
+            PIN salah. Silakan coba lagi.
+          </p>
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="login-remember-me" checked class="rounded border-slate-800 bg-slate-950 text-emerald-500 focus:ring-emerald-500/20">
+            <span>Ingat di perangkat ini</span>
+          </label>
+        </div>
+
+        <button type="submit" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-slate-950 font-extrabold text-sm shadow-lg shadow-emerald-500/20 transition">
+          Buka Pembukuan
+        </button>
+      </form>
+
+      <div class="text-center pt-2 border-t border-slate-800/80">
+        <p class="text-[11px] text-slate-500">
+          PIN bawaan awal: <span class="font-mono text-emerald-400 font-semibold">1234</span><br>
+          (Bisa Anda ubah di menu Pengaturan)
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TOP NAVBAR ==================== -->
   <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
@@ -71,9 +120,13 @@
 
         <!-- Quick actions -->
         <div class="flex items-center gap-2">
-          <button onclick="openModal('backupModal')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-300 border border-slate-700 transition flex items-center gap-1.5">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-            <span class="hidden sm:inline">Backup / Ekspor</span>
+          <button onclick="openModal('backupModal')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-300 border border-slate-700 transition flex items-center gap-1.5" title="Backup & Pengaturan PIN">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <span class="hidden sm:inline">Pengaturan & Backup</span>
+          </button>
+          <button onclick="lockApp()" class="px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-xs font-medium text-rose-400 border border-rose-500/20 transition flex items-center gap-1.5" title="Kunci Aplikasi">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            <span>Kunci</span>
           </button>
         </div>
       </div>
@@ -96,7 +149,7 @@
     </div>
   </header>
 
-  <!-- MAIN CONTAINER -->
+  <!-- ==================== MAIN CONTAINER ==================== -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
     <!-- ==================== TAB 1: DASHBOARD ==================== -->
@@ -300,7 +353,6 @@
         <div class="w-full sm:w-60">
           <select id="asset-category-filter" onchange="renderAssets()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-emerald-500">
             <option value="ALL">Semua Kategori</option>
-            <!-- Populated via JS -->
           </select>
         </div>
       </div>
@@ -568,17 +620,42 @@
     </div>
   </div>
 
-  <!-- MODAL: BACKUP & EKSPOR -->
+  <!-- MODAL: BACKUP & PENGATURAN -->
   <div id="backupModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h3 class="text-base font-bold text-white">Cadangan Data & Ekspor</h3>
+        <h3 class="text-base font-bold text-white">Pengaturan & Cadangan Data</h3>
         <button onclick="closeModal('backupModal')" class="text-slate-400 hover:text-white">✕</button>
       </div>
-      <p class="text-xs text-slate-400">
-        Data pembukuan dan aset Anda disimpan secara aman di browser (LocalStorage). Gunakan fitur ekspor ini untuk mengunduh cadangan sewaktu-waktu.
-      </p>
+
+      <!-- SECTION: UBAH PIN KEAMANAN -->
+      <div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-4 space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+          <span>🔒 Ubah PIN Keamanan</span>
+        </h4>
+        <form id="form-change-pin" onsubmit="handleChangePin(event)" class="space-y-2.5 text-xs">
+          <div>
+            <label class="block text-slate-400 mb-1">PIN Lama</label>
+            <input type="password" id="change-pin-old" required placeholder="PIN saat ini" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-white focus:outline-none focus:border-emerald-500 font-mono">
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">PIN Baru (Bebas angka/huruf)</label>
+            <input type="password" id="change-pin-new" required placeholder="PIN baru Anda" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-white focus:outline-none focus:border-emerald-500 font-mono">
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Konfirmasi PIN Baru</label>
+            <input type="password" id="change-pin-confirm" required placeholder="Ulangi PIN baru" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-white focus:outline-none focus:border-emerald-500 font-mono">
+          </div>
+          <p id="pin-change-feedback" class="text-[11px] hidden font-medium"></p>
+          <button type="submit" class="w-full py-2 px-3 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold transition">
+            Simpan PIN Baru
+          </button>
+        </form>
+      </div>
+
+      <!-- SECTION: EKSPOR DATA -->
       <div class="space-y-2">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Cadangan Data (.JSON / .CSV)</h4>
         <button onclick="exportDataJSON()" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-700 transition flex items-center justify-center gap-2">
           <span>💾 Unduh Backup Penuh (.JSON)</span>
         </button>
@@ -594,6 +671,7 @@
           <input type="file" id="import-json-file" accept=".json" onchange="importDataJSON(event)" class="text-xs text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-emerald-400 hover:file:bg-slate-700 cursor-pointer">
         </div>
       </div>
+
       <div class="pt-2 flex justify-between items-center text-xs">
         <button onclick="resetDefaultData()" class="text-rose-400 hover:underline">Reset ke Data Awal</button>
         <button onclick="closeModal('backupModal')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300">Tutup</button>
@@ -603,6 +681,91 @@
 
   <!-- SCRIPT LOGIC -->
   <script>
+    // SECURITY & AUTHENTICATION
+    const DEFAULT_PIN = "1234";
+
+    function getStoredPin() {
+      return localStorage.getItem('studio_pin') || DEFAULT_PIN;
+    }
+
+    function checkAuthStatus() {
+      const isAuth = sessionStorage.getItem('studio_auth') === 'true' || localStorage.getItem('studio_auth') === 'true';
+      const loginScreen = document.getElementById('login-screen');
+      if (isAuth) {
+        loginScreen.classList.add('hidden');
+      } else {
+        loginScreen.classList.remove('hidden');
+        document.getElementById('login-pin-input').value = '';
+        document.getElementById('login-pin-input').focus();
+      }
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const enteredPin = document.getElementById('login-pin-input').value;
+      const currentPin = getStoredPin();
+      const errorMsg = document.getElementById('login-error-msg');
+      const rememberMe = document.getElementById('login-remember-me').checked;
+
+      if (enteredPin === currentPin) {
+        errorMsg.classList.add('hidden');
+        sessionStorage.setItem('studio_auth', 'true');
+        if (rememberMe) {
+          localStorage.setItem('studio_auth', 'true');
+        } else {
+          localStorage.removeItem('studio_auth');
+        }
+        document.getElementById('login-screen').classList.add('hidden');
+      } else {
+        errorMsg.classList.remove('hidden');
+        document.getElementById('login-pin-input').value = '';
+        document.getElementById('login-pin-input').focus();
+      }
+    }
+
+    function togglePinVisibility() {
+      const pinInput = document.getElementById('login-pin-input');
+      pinInput.type = pinInput.type === 'password' ? 'text' : 'password';
+    }
+
+    function lockApp() {
+      sessionStorage.removeItem('studio_auth');
+      localStorage.removeItem('studio_auth');
+      checkAuthStatus();
+    }
+
+    function handleChangePin(e) {
+      e.preventDefault();
+      const oldPin = document.getElementById('change-pin-old').value;
+      const newPin = document.getElementById('change-pin-new').value;
+      const confirmPin = document.getElementById('change-pin-confirm').value;
+      const feedback = document.getElementById('pin-change-feedback');
+      const currentPin = getStoredPin();
+
+      feedback.classList.remove('hidden', 'text-rose-400', 'text-emerald-400');
+
+      if (oldPin !== currentPin) {
+        feedback.textContent = 'PIN lama salah!';
+        feedback.classList.add('text-rose-400');
+        return;
+      }
+      if (newPin !== confirmPin) {
+        feedback.textContent = 'Konfirmasi PIN baru tidak cocok!';
+        feedback.classList.add('text-rose-400');
+        return;
+      }
+      if (newPin.length < 3) {
+        feedback.textContent = 'PIN minimal 3 karakter!';
+        feedback.classList.add('text-rose-400');
+        return;
+      }
+
+      localStorage.setItem('studio_pin', newPin);
+      feedback.textContent = 'PIN berhasil diubah!';
+      feedback.classList.add('text-emerald-400');
+      document.getElementById('form-change-pin').reset();
+    }
+
     // INITIAL DATASETS
     const DEFAULT_ASSETS = [{"id": 1, "name": "Sony A7C", "cat": "Kamera & Optik", "qty": 1, "price": 15000000, "note": "Body kamera utama"}, {"id": 2, "name": "Lensa Kit 28-70mm", "cat": "Kamera & Optik", "qty": 1, "price": 2700000, "note": "Lensa kit standard zoom"}, {"id": 3, "name": "Gimbal DJI RS 2 Pro Combo", "cat": "Stabilisasi & Support", "qty": 1, "price": 9500000, "note": "Gimbal stabilizer"}, {"id": 4, "name": "Body Rig A7C", "cat": "Rigging & Aksesori Kamera", "qty": 1, "price": 650000, "note": "Cage / body rig"}, {"id": 5, "name": "Top Handle NATO Neewer", "cat": "Rigging & Aksesori Kamera", "qty": 1, "price": 350000, "note": "Top handle"}, {"id": 6, "name": "NATO Mount 6cm", "cat": "Rigging & Aksesori Kamera", "qty": 1, "price": 75000, "note": "Mounting rail"}, {"id": 7, "name": "ND + CPL Filter Neewer 82mm True Color", "cat": "Kamera & Optik", "qty": 1, "price": 850000, "note": "Filter lensa"}, {"id": 8, "name": "Baterai Kingma NP-FZ100 (2 pcs)", "cat": "Daya & Baterai", "qty": 1, "price": 640000, "note": "2 unit baterai cadangan"}, {"id": 9, "name": "Charger NP-FZ100 Kingma", "cat": "Daya & Baterai", "qty": 1, "price": 250000, "note": "Charger baterai"}, {"id": 10, "name": "Tripod Takara Rover 77", "cat": "Stabilisasi & Support", "qty": 1, "price": 1200000, "note": "Tripod video/kamera"}, {"id": 11, "name": "Tripod Lighting Neewer", "cat": "Lighting & Grip", "qty": 1, "price": 350000, "note": "Light stand"}, {"id": 12, "name": "L-Plate", "cat": "Rigging & Aksesori Kamera", "qty": 1, "price": 75000, "note": "L-plate bracket"}, {"id": 13, "name": "Baterai Dummy NP-FZ100 Kingma", "cat": "Daya & Baterai", "qty": 1, "price": 300000, "note": "Dummy battery power adapter"}, {"id": 14, "name": "Saramonic Air", "cat": "Audio", "qty": 1, "price": 1950000, "note": "Wireless microphone system"}, {"id": 15, "name": "Step Up Ring Filter", "cat": "Kamera & Optik", "qty": 1, "price": 180000, "note": "Adaptor filter"}, {"id": 16, "name": "Step Up Ring 55-82mm", "cat": "Kamera & Optik", "qty": 1, "price": 85000, "note": "Adaptor filter step-up"}, {"id": 17, "name": "SSD 1 TB", "cat": "Penyimpanan & Media", "qty": 1, "price": 3200000, "note": "Media penyimpanan eksternal"}, {"id": 18, "name": "Dongle", "cat": "Kabel & Adaptor", "qty": 1, "price": 150000, "note": "Hub / adapter"}, {"id": 19, "name": "Dongle Lightning to USB", "cat": "Kabel & Adaptor", "qty": 1, "price": 50000, "note": "Adaptor kabel"}, {"id": 20, "name": "Dongle USB to Type C", "cat": "Kabel & Adaptor", "qty": 1, "price": 50000, "note": "Adaptor kabel"}, {"id": 21, "name": "Dongle Lightning to Type C", "cat": "Kabel & Adaptor", "qty": 1, "price": 55000, "note": "Adaptor kabel"}, {"id": 22, "name": "Kabel USB to C 25cm", "cat": "Kabel & Adaptor", "qty": 1, "price": 20000, "note": "Kabel data pendek"}, {"id": 23, "name": "Memory Card Lexar Silver 128GB", "cat": "Penyimpanan & Media", "qty": 1, "price": 950000, "note": "SD Card kamera"}, {"id": 24, "name": "Wadah Memory", "cat": "Penyimpanan & Media", "qty": 1, "price": 40000, "note": "Case SD card"}, {"id": 25, "name": "Mounting Monitor Neewer", "cat": "Rigging & Aksesori Kamera", "qty": 1, "price": 150000, "note": "Cold shoe / monitor mount"}, {"id": 26, "name": "Mounting HP Leaplight", "cat": "Rigging & Aksesori Kamera", "qty": 1, "price": 150000, "note": "Phone holder / mount"}, {"id": 27, "name": "Tas Kamera Eiger", "cat": "Tas & Proteksi", "qty": 1, "price": 950000, "note": "Backpack / bag kamera"}, {"id": 28, "name": "Monitor N27Q", "cat": "Komputer & Post-Production", "qty": 1, "price": 2200000, "note": "Monitor eksternal 27 inch"}, {"id": 29, "name": "MacBook Pro M1 Pro 16 Inch", "cat": "Komputer & Post-Production", "qty": 1, "price": 27000000, "note": "Workstation laptop editing"}, {"id": 30, "name": "Keyboard External for Mac", "cat": "Komputer & Post-Production", "qty": 1, "price": 500000, "note": "Keyboard"}, {"id": 31, "name": "Mouse Rexus", "cat": "Komputer & Post-Production", "qty": 1, "price": 400000, "note": "Mouse"}, {"id": 32, "name": "Kursi Sihoo", "cat": "Workspace & Furnitur", "qty": 1, "price": 2200000, "note": "Kursi ergonomis kerja"}, {"id": 33, "name": "IEM Tin Hifi C3 MK + Kabel Yongse Black Sea", "cat": "Audio", "qty": 1, "price": 1200000, "note": "In-ear monitor & kabel audio"}, {"id": 34, "name": "Cleaning Kit", "cat": "Perawatan & Maintenance", "qty": 1, "price": 90000, "note": "Alat pembersih optik/kamera"}, {"id": 35, "name": "Card Reader Ugreen", "cat": "Penyimpanan & Media", "qty": 1, "price": 120000, "note": "Card reader SD/MicroSD"}, {"id": 36, "name": "LAN to Type C", "cat": "Kabel & Adaptor", "qty": 1, "price": 200000, "note": "Adapter ethernet RJ45"}, {"id": 37, "name": "Charger 6 Port", "cat": "Daya & Baterai", "qty": 1, "price": 300000, "note": "Multi-port desktop charger"}, {"id": 38, "name": "Kabel Manajemen", "cat": "Workspace & Furnitur", "qty": 1, "price": 150000, "note": "Aksesoris manajemen kabel meja"}, {"id": 39, "name": "Charger 100W Lenovo", "cat": "Daya & Baterai", "qty": 1, "price": 350000, "note": "Power delivery charger 100W"}];
     const DEFAULT_PROJECTS = [{"id": "PRJ-001", "client": "Kopi Mergan", "service": "Video Promosi Reels & TikTok", "date_start": "2026-10-01", "deadline": "2026-10-07", "contract": 1500000, "direct_cost": 200000, "payment_status": "DP 50%", "job_status": "Produksi / Shooting", "note": "Shooting menu baru kopi susu gula aren"}, {"id": "PRJ-002", "client": "Warteg Orens", "service": "Company Profile & Dokumentasi", "date_start": "2026-10-10", "deadline": "2026-10-18", "contract": 2500000, "direct_cost": 350000, "payment_status": "Belum Bayar", "job_status": "Briefing", "note": "Paket video 1 menit 4K + 3 foto produk"}];
@@ -1061,6 +1224,7 @@
 
     // ON LOAD
     document.addEventListener('DOMContentLoaded', () => {
+      checkAuthStatus();
       updateAll();
     });
   </script>
